@@ -3,6 +3,7 @@ from aiohttp import web
 from ..core import logger
 from ..general import cmonitor
 
+
 @PromptServer.instance.routes.patch("/crystools/monitor")
 async def newSettings(request):
     try:
@@ -19,7 +20,6 @@ async def newSettings(request):
                 cmonitor.startMonitor()
             else:
                 cmonitor.rate = rate
-
 
         if 'switchCPU' in settings is not None:
             switchCPU = settings['switchCPU']
@@ -48,7 +48,6 @@ async def newSettings(request):
                 raise Exception('whichHDD must be an string.')
 
             cmonitor.hardwareInfo.whichHDD = whichHDD
-
 
         return web.Response(status=200)
     except Exception as e:
@@ -98,28 +97,31 @@ def getGPUs(request):
 
 @PromptServer.instance.routes.patch("/crystools/monitor/GPU/{index}")
 async def getGPUs(request):
-  try:
-    index = request.match_info["index"]
-    settings = await request.json()
-    if 'utilization' in settings is not None:
-      if type(settings['utilization']) is not bool:
-        raise Exception('utilization must be an boolean.')
+    try:
+        index = request.match_info["index"]
+        settings = await request.json()
+        if 'utilization' in settings is not None:
+            if type(settings['utilization']) is not bool:
+                raise Exception('utilization must be an boolean.')
 
-      cmonitor.hardwareInfo.GPUInfo.gpusUtilization[int(index)] = settings['utilization']
+            cmonitor.hardwareInfo.GPUInfo.gpusUtilization[int(
+                index)] = settings['utilization']
 
-    if 'vram' in settings is not None:
-      if type(settings['vram']) is not bool:
-        raise Exception('vram must be an boolean.')
+        if 'vram' in settings is not None:
+            if type(settings['vram']) is not bool:
+                raise Exception('vram must be an boolean.')
 
-      cmonitor.hardwareInfo.GPUInfo.gpusVRAM[int(index)] = settings['vram']
+            cmonitor.hardwareInfo.GPUInfo.gpusVRAM[int(
+                index)] = settings['vram']
 
-    if 'temperature' in settings is not None:
-      if type(settings['temperature']) is not bool:
-        raise Exception('temperature must be an boolean.')
+        if 'temperature' in settings is not None:
+            if type(settings['temperature']) is not bool:
+                raise Exception('temperature must be an boolean.')
 
-      cmonitor.hardwareInfo.GPUInfo.gpusTemperature[int(index)] = settings['temperature']
+            cmonitor.hardwareInfo.GPUInfo.gpusTemperature[int(
+                index)] = settings['temperature']
 
-    return web.Response(status=200)
-  except Exception as e:
-    logger.error(e)
-    return web.Response(status=400, text=str(e))
+        return web.Response(status=200)
+    except Exception as e:
+        logger.error(e)
+        return web.Response(status=400, text=str(e))

@@ -17,18 +17,19 @@ class CMonitor:
 
     def __init__(self, rate=5, switchCPU=False, switchGPU=False, switchHDD=False, switchRAM=False, switchVRAM=False):
         self.rate = rate
-        self.hardwareInfo = CHardwareInfo(switchCPU, switchGPU, switchHDD, switchRAM, switchVRAM)
+        self.hardwareInfo = CHardwareInfo(
+            switchCPU, switchGPU, switchHDD, switchRAM, switchVRAM)
 
-        self.startMonitor()
+        # self.startMonitor()
 
     async def send_message(self, data) -> None:
-      # I'm not sure if it is ok, but works ¯\_(ツ)_/¯
-      # I tried to use async with send_json, but eventually that don't send the message
-      server.PromptServer.instance.send_sync('crystools.monitor', data)
+        # I'm not sure if it is ok, but works ¯\_(ツ)_/¯
+        # I tried to use async with send_json, but eventually that don't send the message
+        server.PromptServer.instance.send_sync('crystools.monitor', data)
 
     def startMonitorLoop(self):
-      # logger.debug('Starting monitor loop...')
-      asyncio.run(self.MonitorLoop())
+        # logger.debug('Starting monitor loop...')
+        asyncio.run(self.MonitorLoop())
 
     async def MonitorLoop(self):
         while self.rate > 0 and not self.threadController.is_set():
@@ -57,11 +58,9 @@ class CMonitor:
             self.monitorThread.daemon = True
             self.monitorThread.start()
 
-
     def stopMonitor(self):
         logger.debug('Stopping monitor...')
         self.threadController.set()
 
 
 cmonitor = CMonitor(1, True, True, True, True, True)
-
